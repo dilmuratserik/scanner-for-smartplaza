@@ -40,6 +40,7 @@ export class ZBarScanner extends CppObject {
   }
 
   scan(image: ZBarImage): number {
+
     this.checkAlive()
     return this.inst._ImageScanner_scan(this.ptr, image.getPointer())
   }

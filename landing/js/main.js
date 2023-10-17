@@ -72,11 +72,22 @@ function detect(source) {
                     symbol.points.forEach(point => ctx.lineTo(point.x, point.y))
 
                     ctx.lineWidth = Math.max(Math.min(canvas.height, canvas.width) / 100, 1)
-                    ctx.strokeStyle = '#00e00060'
+                    ctx.strokeStyle = 'red'
                     ctx.stroke()
                 })
 
-                symbols.forEach(s => s.rawValue = s.decode(el.encoding.value))
+                symbols.forEach(s => s.rawValue = s.decode('utf-8'))
+                const foundSymbol = symbols.find(s => s.rawValue && s.rawValue.length === 20);
+                if (foundSymbol) {
+                    detectVideo(false);
+
+
+                    setTimeout(() => {
+                        window.location.href = `http://10.110.1.144:4200/ticketId=${foundSymbol.rawValue}`;
+                    }, 2000);
+                }
+
+
 
                 if (!el.details.checked) {
                     symbols.forEach(s => {
@@ -89,7 +100,9 @@ function detect(source) {
                 }
 
                 el.result.innerText = JSON.stringify(symbols, null, 2)
-
+                el.video.addEventListener('loadedmetadata', function() {
+                    detect(el.video);
+                });
                 el.waitingTime.innerText = formatNumber(afterFunctionCalled - afterPreviousCallFinished)
                 el.drawImageTime.innerText = formatNumber(afterDrawImage - afterFunctionCalled)
                 el.getImageDataTime.innerText = formatNumber(afterGetImageData - afterDrawImage)
@@ -135,38 +148,37 @@ function detectVideo(active) {
 
 function onUrlActive() {
     if (el.imgUrl.validity.valid) {
-        el.imgBtn.className = el.videoBtn.className = ''
-        el.imgUrl.className = 'active'
-
-        el.img.src = el.imgUrl.value
+        // el.imgUrl.className = 'active'
+        //
+        // el.img.src = el.imgUrl.value
         detectImg()
     }
 }
 
-el.imgUrl.addEventListener('change', onUrlActive)
-el.imgUrl.addEventListener('focus', onUrlActive)
+// el.imgUrl.addEventListener('change', onUrlActive)
+// el.imgUrl.addEventListener('focus', onUrlActive)
 
 
-el.fileInput.addEventListener('change', event => {
-    el.imgUrl.className = el.videoBtn.className = ''
-    el.imgBtn.className = 'button-primary'
+// el.fileInput.addEventListener('change', event => {
+//     el.imgUrl.className = el.videoBtn.className = ''
+//     // el.imgBtn.className = 'button-primary'
+//     //
+//     // el.img.src = URL.createObjectURL(el.fileInput.files[0])
+//     // el.fileInput.value = null
+//     detectImg()
+// })
 
-    el.img.src = URL.createObjectURL(el.fileInput.files[0])
-    el.fileInput.value = null
-    detectImg()
-})
 
-
-el.imgBtn.addEventListener('click', event => {
-    el.fileInput.dispatchEvent(new MouseEvent('click'))
-})
+// el.imgBtn.addEventListener('click', event => {
+//     el.fileInput.dispatchEvent(new MouseEvent('click'))
+// })
 
 
 el.videoBtn.addEventListener('click', event => {
     if (!requestId) {
         navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: 'environment' } })
             .then(stream => {
-                el.imgUrl.className = el.imgBtn.className = ''
+                // el.imgUrl.className = el.imgBtn.className = ''
                 el.videoBtn.className = 'button-primary'
 
                 el.video.srcObject = stream
@@ -178,8 +190,27 @@ el.videoBtn.addEventListener('click', event => {
             })
 
     } else {
-        el.imgUrl.className = el.imgBtn.className = el.videoBtn.className = ''
+        // el.imgUrl.className = el.imgBtn.className = el.videoBtn.className = ''
 
         detectVideo(false)
     }
 })
+function startVideoCapture() {
+    if (!requestId) {
+        navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: 'environment' } })
+            .then(stream => {
+                el.videoBtn.className = 'button-primary';
+                el.video.srcObject = stream;
+                detectVideo(true);
+            })
+            .catch(error => {
+                el.result.innerText = JSON.stringify(error);
+                el.timing.className = '';
+            });
+    } else {
+        detectVideo(false);
+    }
+}
+document.addEventListener("DOMContentLoaded", function() {
+    startVideoCapture();
+});

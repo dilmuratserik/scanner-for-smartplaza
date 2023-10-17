@@ -1,19 +1,66 @@
-const fs = require('fs');
-const https = require('https');
-const express = require('express');
-const privateKey = fs.readFileSync('/path/to/private-key.pem', 'utf8');
-const certificate = fs.readFileSync('/path/to/certificate.pem', 'utf8');
-const ca = fs.readFileSync('/path/to/ca.pem', 'utf8');
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
+import https from 'https';
+import fs from 'fs';
+require('dotenv').config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-const credentials = {
-    key: privateKey,
-    cert: certificate,
-    ca: ca
-};
-
-const httpsServer = https.createServer(credentials, app);
-
-httpsServer.listen(443, () => {
-    console.log('HTTPS Server running on port 443');
-});
 const app = express();
+const PORT = 3000;
+
+// Parse command-line arguments
+const argv = yargs(hideBin(process.argv))
+    .option('ssl', {
+        type: 'boolean',
+        default: false,
+        describe: 'Enable SSL',
+    })
+    .option('ssl-key', {
+        type: 'string',
+        describe: 'Path to SSL key',
+    })
+    .option('ssl-cert', {
+        type: 'string',
+        describe: 'Path to SSL certificate',
+    })
+    .argv;
+
+let server;
+
+if (argv.ssl) {
+    if (!argv['ssl-key'] || !argv['ssl-cert']) {
+        console.error('Please provide both SSL key and certificate.');
+        process.exit(1);
+    }
+
+    server = https.createServer({
+        key: fs.readFileSync(argv['ssl-key']),
+        cert: fs.readFileSync(argv['ssl-cert'])
+    }, app);
+} else {
+    server = app;
+}
+
+// If --host is provided, use that. Otherwise, default to 'localhost'
+const HOST = argv.host || 'localhost';
+
+// Serve static files from the 'landing' directory
+app.use(express.static(path.join(__dirname, 'landing')));
+app.get('/', (req, res) => {
+    res.redirect('/index.html');
+});
+app.get('/config', (req, res) => {
+    const config = {
+        URL_TO_SEND: process.env.URL_TO_SEND
+    };
+    res.json(config);
+});
+
+server.listen(PORT, HOST, () => {
+    console.log(`Server is running on http${argv.ssl ? 's' : ''}://${HOST}:${PORT}`);
+});

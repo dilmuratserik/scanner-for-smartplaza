@@ -7,6 +7,5 @@ node_modules/
 # Intermediate and distribution artifacts
 build/
 dist/
-zbar-*/
 zbar-*.tar.gz
 undecaf-*.tgz
