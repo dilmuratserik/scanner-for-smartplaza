@@ -6,12 +6,11 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import https from 'https';
 import fs from 'fs';
-require('dotenv').config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const PORT = 3000;
+const PORT = 7777;
 
 // Parse command-line arguments
 const argv = yargs(hideBin(process.argv))

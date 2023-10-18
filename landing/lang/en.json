@@ -1,0 +1,9 @@
+{
+  "scan_me": "SCAN THE BARCODE OF THE PARKING TICKET",
+  "input_type": "MANUAL INPUT",
+  "first_step": "SCAN THE BARCODE",
+  "second_step": "CHOOSE PAYMENT METHOD",
+  "third_step": "MAKE THE PAYMENT",
+  "button_cancel": "CANCEL",
+  "label_number": "Your license plate or ticket number"
+}

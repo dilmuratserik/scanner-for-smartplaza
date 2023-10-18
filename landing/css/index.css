@@ -13,3 +13,72 @@
 .bg-gray{
     background-color:#BDBDBD;
 }
+.btn.btn-style{
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0em;
+    text-align: left;
+
+}
+.style-label{
+    font-family: Inter;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 15px;
+    letter-spacing: 0em;
+    text-align: left;
+
+}
+.custom-card {
+    border: 1px solid #CDCDCD;
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+
+}
+
+.card-img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+.triangle-container {
+    position: relative;
+    background-color: white;
+}
+
+.triangle-container::before,
+.triangle-container::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 0;
+    height: 0;
+
+    transform: translateY(-50%);
+}
+.triangle-container::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 14px;
+    height: 56px;
+    background-color: #B7B6B6;
+    clip-path: polygon(100% 50%, 0% 0%, 0% 100%);
+}
+
+.triangle-container::after {
+    content: "";
+    position: absolute;
+    left:100%;
+    width: 14px;
+    height: 56px;
+    background-color: white;
+    clip-path: polygon(100% 50%, 0% 0%, 0% 100%);
+}
+#ticketInput:focus {
+    outline: none;
+    box-shadow: none;
+}

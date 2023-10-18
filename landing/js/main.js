@@ -83,8 +83,9 @@ function detect(source) {
 
 
                     setTimeout(() => {
-                        window.location.href = `http://10.110.1.144:4200/ticketId=${foundSymbol.rawValue}`;
+                        window.location.href = `http://10.110.1.144:4200/?ticketId=${foundSymbol.rawValue}`;
                     }, 2000);
+
                 }
 
 
@@ -143,6 +144,7 @@ function detectVideo(active) {
         cancelAnimationFrame(requestId)
         requestId = null
     }
+
 }
 
 
@@ -213,4 +215,49 @@ function startVideoCapture() {
 }
 document.addEventListener("DOMContentLoaded", function() {
     startVideoCapture();
+
+    const selector = document.getElementById('languageSelector');
+    const scanText = document.getElementById('scan_me');
+    const inputTypeText = document.getElementById('input_type');
+    const firstStepText = document.getElementById('first_step');
+    const secondStepText = document.getElementById('second_step');
+    const thirdStepText = document.getElementById('third_step');
+    const buttonCancel = document.getElementById('button_cancel');
+    const labelNumber = document.getElementById('label_number');
+
+    function loadTranslations(lang) {
+        fetch(`/lang/${lang}.json`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                scanText.textContent = data.scan_me;
+                inputTypeText.textContent = data.input_type;
+                firstStepText.textContent = data.first_step;
+                secondStepText.textContent = data.second_step;
+                thirdStepText.textContent = data.third_step;
+                buttonCancel.textContent = data.button_cancel;
+                labelNumber.textContent = data.label_number;
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error.message);
+            });
+    }
+
+    selector.addEventListener('change', function() {
+        const selectedLang = selector.value;
+        loadTranslations(selectedLang);
+    });
+
+    loadTranslations('kz');
+});
+
+
+document.getElementById('submitButton').addEventListener('click', function() {
+    const ticketValue = document.getElementById('ticketInput').value;
+    window.location.href = `http://10.110.1.144:4200/?ticketId=${ticketValue}`;
 });

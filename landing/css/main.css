@@ -13,6 +13,7 @@ label {
 .viewport {
     display: inline-block;
     position: relative;
+    min-height: 200px;
 }
 .viewport::before,
 .viewport::after {
@@ -32,12 +33,16 @@ label {
 
 .viewport::after {
     bottom: 0;
+
 }
 img, video, #note, #timing {
     display: none;
-    height: 200px;
+
+    height: 100%;
     width: 100%;
-    object-fit: fill;
+    object-fit: cover;
+    max-height: 200px;
+    min-width: 30em;
 }
 
 #imgUrl {
